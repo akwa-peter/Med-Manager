@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    tools:context="com.example.rad5.med_manager.Add_Medication">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/addMedication_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:title="Add Medication"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="30dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_med_text"
+                        android:textColor="@color/colorDeepAsh"
+                        android:textAlignment="center"/>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="60dp">
+
+                        <EditText
+                            android:id="@+id/edt_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:backgroundTint="@color/colorDeepAsh"
+                            android:hint="Full Name"
+                            android:inputType="text"
+                            android:textAppearance="?android:textAppearanceSmall" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <EditText
+                            android:id="@+id/edt_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:backgroundTint="@color/colorDeepAsh"
+                            android:hint="Description"
+                            android:inputType="text"
+                            android:textAppearance="?android:textAppearanceSmall" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <EditText
+                            android:id="@+id/edt_frequency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:backgroundTint="@color/colorDeepAsh"
+                            android:hint="Frequency or Interval"
+                            android:inputType="text"
+                            android:textAppearance="?android:textAppearanceSmall" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <EditText
+                            android:id="@+id/edt_start_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:backgroundTint="@color/colorDeepAsh"
+                            android:hint="Start Date"
+                            android:inputType="text"
+                            android:textAppearance="?android:textAppearanceSmall" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp">
+
+                        <EditText
+                            android:id="@+id/edt_end_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:backgroundTint="@color/colorDeepAsh"
+                            android:hint="End Date"
+                            android:inputType="text"
+                            android:textAppearance="?android:textAppearanceSmall" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorDeepAsh"
+            android:layout_marginBottom="50dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorAsh"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/delete"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_delete"
+                    android:tint="@color/colorDeepAsh"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_edit"
+                    android:tint="@color/colorDeepAsh"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Edit"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profile"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_profile"
+                    android:tint="@color/colorDeepAsh"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>

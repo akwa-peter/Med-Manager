@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#0084F4</color>
-    <color name="colorPrimaryDark">#0548F5</color>
+    <color name="colorPrimaryDark">#0069C2</color>
     <color name="colorAccent">#F2994A</color>
-    <color name="splash_notificationBar_color">#0083F4</color>
     <color name="vital_sign_color">#00A6FF</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorAsh">#F7F5F5</color>
+    <color name="colorDeepAsh">#8C8B8B</color>
 </resources>

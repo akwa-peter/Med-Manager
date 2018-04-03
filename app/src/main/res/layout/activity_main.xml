@@ -1,18 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.rad5.med_manager.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                app:expandedTitleGravity="bottom|center_horizontal"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/mainActivity_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center"
+                    app:layout_collapseMode="pin"
+                    app:titleTextColor="@color/colorWhite"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/health_logo"
+                        android:layout_width="45dp"
+                        android:layout_height="55dp"
+                        android:src="@drawable/health_care_logo"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"/>
+
+                    <TextView
+                        android:id="@+id/txt_desc1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_bar_intro1"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/colorWhite"
+                        android:layout_below="@id/health_logo"/>
+
+                    <TextView
+                        android:id="@+id/txt_desc2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_bar_intro2"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/colorWhite"
+                        android:layout_below="@id/txt_desc1"/>
+
+                    <TextView
+                        android:id="@+id/txt_click"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Click the plus button to add a medication."
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/colorWhite"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@id/txt_desc2" />
+
+                </RelativeLayout>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_medication"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:elevation="4dp"
+            android:src="@drawable/ic_add_black_24dp"
+            android:tint="@color/colorWhite" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</android.support.v4.widget.DrawerLayout>
