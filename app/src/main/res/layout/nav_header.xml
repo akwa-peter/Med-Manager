@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@drawable/header_image"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/user_nameNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:layout_alignParentBottom="true"
+        android:textStyle="bold"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:shadowRadius="2"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/user_emailNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="@color/colorWhite"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:shadowRadius="2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@id/user_nameNav" />
+</RelativeLayout>

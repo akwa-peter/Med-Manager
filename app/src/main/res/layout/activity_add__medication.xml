@@ -105,7 +105,7 @@
                             android:layout_marginTop="16dp"
                             android:backgroundTint="@color/colorDeepAsh"
                             android:hint="Start Date"
-                            android:inputType="text"
+                            android:inputType="date"
                             android:textAppearance="?android:textAppearanceSmall" />
 
                     </android.support.design.widget.TextInputLayout>
@@ -122,11 +122,10 @@
                             android:layout_marginTop="16dp"
                             android:backgroundTint="@color/colorDeepAsh"
                             android:hint="End Date"
-                            android:inputType="text"
+                            android:inputType="date"
                             android:textAppearance="?android:textAppearanceSmall" />
 
                     </android.support.design.widget.TextInputLayout>
-
 
                 </LinearLayout>
 
@@ -176,7 +175,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="invisible">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -220,5 +220,22 @@
         </LinearLayout>
 
     </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/edtMed_done"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_good"
+            android:tint="@color/colorWhite"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:elevation="2dp"/>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
