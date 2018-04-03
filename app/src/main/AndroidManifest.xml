@@ -23,7 +23,9 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".Add_Medication"/>
+        <activity android:name=".Add_Medication" />
+        <activity android:name=".User_Profile"
+            android:label=" "/>
     </application>
 
 </manifest>
