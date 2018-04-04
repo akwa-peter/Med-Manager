@@ -14,22 +14,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     FloatingActionButton add_medication;
+
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        //Toast.makeText(MainActivity.this, " "+currentUser.getDisplayName() + " "+currentUser.getEmail(), Toast.LENGTH_LONG).show();
 
         //default view for snack bar
         final View view = (View) findViewById(R.id.drawer_layout);
@@ -49,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        /**
+         * set action for when any of the drawer navigation
+         * menu item is clicked or selected
+         */
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
@@ -77,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
                         Snackbar.make(view, "Help Clicked", Snackbar.LENGTH_LONG).show();
                         break;
 
+                    case R.id.profile:
+                        drawerLayout.closeDrawers();
+                        startActivity(new Intent(MainActivity.this, User_Profile.class));
+                        break;
+
                     default:
                 }
 
@@ -84,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //find the add_medication floating action button and set onClick listener on it
+        /**
+         * find the add_medication floating action button and set onClick listener on it
+         * to open the edit medication activity
+         */
         add_medication = (FloatingActionButton) findViewById(R.id.fab_add_medication);
         add_medication.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +120,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Inflate the action_bar_menu on the main activity
+     * @param menu the menu resource file to be inflated
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Set action on when any of the action bar item is selected
+     * @param item action bar item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -102,11 +145,33 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 drawerLayout.openDrawer(Gravity.START);
                 break;
+
+            case R.id.sign_out:
+                signOut();
+                break;
+
             default:
                 //action
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Sign out the current user
+     */
+    private void signOut()  {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent signOut = new Intent(MainActivity.this, Login.class);
+                        startActivity(signOut);
+                        finish();
+                        Toast.makeText(getApplicationContext(), "Logged out successfully "  , Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 }
