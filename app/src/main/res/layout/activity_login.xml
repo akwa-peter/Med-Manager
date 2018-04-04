@@ -68,14 +68,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="I don't have an account?"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorWhite"
+            android:textSize="15sp"/>
 
         <TextView
+            android:id="@+id/sign_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sign up"
             android:textColor="#FFC805"
-            android:layout_marginLeft="3dp"/>
+            android:layout_marginLeft="3dp"
+            android:textSize="15sp"/>
 
     </LinearLayout>
 

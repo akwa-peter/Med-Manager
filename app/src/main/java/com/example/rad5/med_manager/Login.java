@@ -1,6 +1,7 @@
 package com.example.rad5.med_manager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,25 +9,36 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.rad5.med_manager.Help_Classes.User;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
     View view;
 
+    //check which button was clicked
+    int clickedButton;
+
     //debugging tag
     private static String TAG = "debugger";
 
-    //create an instatnce of a textview object
+    //create an instance of sign in textview object
     TextView continueWithGoogle;
+
+    //create an instance of sign up textview object
+    TextView sign_up;
 
     //successful sign in value
     private static final int RC_SIGN_IN = 100;
@@ -35,9 +47,7 @@ public class Login extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
 
     FirebaseUser currentUser;
-    String userEmail;
-    String userId;
-    String displayName;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +56,9 @@ public class Login extends AppCompatActivity {
 
         //default view for snack bar
         view = (View) findViewById(R.id.health_care_logo);
+
+        // get firebase database instance
+        database = FirebaseDatabase.getInstance();
 
         //check if user is logged in
         // Check for existing Google Sign In account, if the user is already signed in
@@ -56,11 +69,15 @@ public class Login extends AppCompatActivity {
         final List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
 
-        //find the log in with google button and set an onClick listener
+        //find the log in with google button and set an onClick listener to trigger google sign in
         continueWithGoogle = (TextView) findViewById(R.id.txt_continue_with_google);
         continueWithGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //assign the sign in id to the clicked button
+                clickedButton = continueWithGoogle.getId();
+
                 // Create and launch sign-in intent
                 startActivityForResult(
                         AuthUI.getInstance()
@@ -72,12 +89,31 @@ public class Login extends AppCompatActivity {
                         RC_SIGN_IN);
             }
         });
+
+        //initialize the sign up text view and set an onClic listener to sign up a new user
+        sign_up = (TextView) findViewById(R.id.sign_up);
+        sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //assign the sign up id to the clicked button
+                clickedButton = sign_up.getId();
+
+                // Create and launch sign-in intent
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(providers)
+                                .setLogo(R.drawable.health_care_logo) // Set logo drawable
+                                .setTheme(R.style.AppTheme)
+                                .build(),
+                        RC_SIGN_IN);
+            }
+        });
+
+
     }
 
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -89,16 +125,26 @@ public class Login extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-            progressBar.setVisibility(View.VISIBLE);
 
             // Successfully signed in
             if (resultCode == RESULT_OK) {
 
-                currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                progressBar.setVisibility(View.VISIBLE);
 
-                userEmail = currentUser.getEmail();
-                userId = currentUser.getUid();
-                displayName = currentUser.getDisplayName();
+                //get the current signed in user
+                currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                String userId = currentUser.getUid();
+                String name = currentUser.getDisplayName();
+                String email = currentUser.getEmail();
+                String imgUrl = currentUser.getPhotoUrl().toString();
+
+                if (clickedButton == sign_up.getId()){
+                    //Write a message to the database
+//                    DatabaseReference myRef = database.getReference("users");
+//                    myRef.setValue("Hello, World!");
+                    writeNewUser(userId, name, email, imgUrl);
+
+                }
 
                 startActivity(new Intent(Login.this, MainActivity.class));
                 finish();
@@ -122,5 +168,28 @@ public class Login extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    /**
+     * create a new user
+     * @param userId the user id
+     * @param name the name of the user
+     * @param email the user email
+     * @param imgUrl the user image url
+     */
+    private void writeNewUser(String userId, String name, String email, String imgUrl) {
+
+        //get reference to the users in the database
+        DatabaseReference myRef = database.getReference("users");
+
+        //create a new user object
+        User user = new User(name, email, imgUrl);
+        Map<String, Object> userValues = user.toMap();
+
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(userId, userValues);
+
+        myRef.updateChildren(childUpdates);
     }
 }
