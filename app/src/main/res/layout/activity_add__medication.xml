@@ -53,7 +53,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:backgroundTint="@color/colorDeepAsh"
-                            android:hint="Full Name"
+                            android:hint="Name of Medication"
                             android:inputType="text"
                             android:textAppearance="?android:textAppearanceSmall" />
 
@@ -105,7 +105,8 @@
                             android:layout_marginTop="16dp"
                             android:backgroundTint="@color/colorDeepAsh"
                             android:hint="Start Date"
-                            android:inputType="date"
+                            android:clickable="true"
+                            android:focusable="false"
                             android:textAppearance="?android:textAppearanceSmall" />
 
                     </android.support.design.widget.TextInputLayout>
@@ -113,7 +114,8 @@
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="55dp">
 
                         <EditText
                             android:id="@+id/edt_end_date"
@@ -122,7 +124,8 @@
                             android:layout_marginTop="16dp"
                             android:backgroundTint="@color/colorDeepAsh"
                             android:hint="End Date"
-                            android:inputType="date"
+                            android:clickable="true"
+                            android:focusable="false"
                             android:textAppearance="?android:textAppearanceSmall" />
 
                     </android.support.design.widget.TextInputLayout>

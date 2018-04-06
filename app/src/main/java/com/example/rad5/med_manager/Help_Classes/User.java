@@ -23,8 +23,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String imgUrl) {
-        this.username = username;
+    public User(String email, String imgUrl) {
+//        this.username = username;
         this.email = email;
         this.imgUrl = imgUrl;
     }
@@ -32,7 +32,7 @@ public class User {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("username", username);
+//        result.put("username", username);
         result.put("email", email);
         result.put("imageUrl", imgUrl);
         return result;

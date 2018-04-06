@@ -13,6 +13,14 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
+        <ListView
+            android:id="@+id/my_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="210dp"

@@ -142,7 +142,7 @@ public class Login extends AppCompatActivity {
                     //Write a message to the database
 //                    DatabaseReference myRef = database.getReference("users");
 //                    myRef.setValue("Hello, World!");
-                    writeNewUser(userId, name, email, imgUrl);
+                    writeNewUser(name, email, imgUrl);
 
                 }
 
@@ -172,23 +172,21 @@ public class Login extends AppCompatActivity {
 
     /**
      * create a new user
-     * @param userId the user id
      * @param name the name of the user
      * @param email the user email
      * @param imgUrl the user image url
      */
-    private void writeNewUser(String userId, String name, String email, String imgUrl) {
+    private void writeNewUser(String name, String email, String imgUrl) {
 
         //get reference to the users in the database
         DatabaseReference myRef = database.getReference("users");
 
         //create a new user object
-        User user = new User(name, email, imgUrl);
+        User user = new User(email, imgUrl);
         Map<String, Object> userValues = user.toMap();
 
-
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userId, userValues);
+        childUpdates.put(name, userValues);
 
         myRef.updateChildren(childUpdates);
     }

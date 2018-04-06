@@ -1,10 +1,7 @@
 package com.example.rad5.med_manager;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,8 +16,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rad5.med_manager.Help_Classes.Medication;
+import com.example.rad5.med_manager.Help_Classes.MedicationAdapter;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +33,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,11 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseUser currentUser;
 
+    DatabaseReference ref;
+    ListView listView;
+    ArrayList<Medication> medications;
+    MedicationAdapter adapter;
+    Medication medication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         //Toast.makeText(MainActivity.this, " "+currentUser.getDisplayName() + " "+currentUser.getEmail(), Toast.LENGTH_LONG).show();
@@ -66,6 +75,38 @@ public class MainActivity extends AppCompatActivity {
             supportActionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        listView = (ListView) findViewById(R.id.my_list);
+        medications = new ArrayList<Medication>();
+        medication = new Medication();
+
+        adapter = new MedicationAdapter(this, medications);
+
+        //get the firebase database reference
+        ref = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(currentUser.getDisplayName()).child("medications");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                medications.clear();
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()){
+
+                    medication = ds.getValue(Medication.class);
+                    medications.add(medication);
+
+                }
+
+                Log.d("debugger", "medication item = " + medication.getDescription());
+                listView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         //find the navigation view and the drawer layout
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -127,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, Add_Medication.class));
             }
         });
-
 
     }
 
