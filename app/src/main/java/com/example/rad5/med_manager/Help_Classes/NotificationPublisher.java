@@ -27,6 +27,14 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
 
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification notification = intent.getParcelableExtra(NOTIFICATION);
+        int id = intent.getIntExtra(NOTIFICATION_ID, 0);
+        assert notificationManager != null;
+        notificationManager.notify(id, notification);
+
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         assert vibrator != null;
         vibrator.vibrate(2000);
@@ -35,20 +43,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         try {
 
-            NotificationManager notificationManager = (NotificationManager)
-                    context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            Notification notification = intent.getParcelableExtra(NOTIFICATION);
-            int id = intent.getIntExtra(NOTIFICATION_ID, 0);
-            assert notificationManager != null;
-            notificationManager.notify(id, notification);
-
-//            MainActivity inst = MainActivity.instance();
-//            inst.setAlarmText("Alarm! Wake up! Wake up!");
-
             // this will sound the alarm tone
-            // this will sound the alarm once, if you wish to
-            // raise alarm in loop continuously then use MediaPlayer and
             Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
             if (alarmUri == null) {

@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        Toast.makeText(MainActivity.this, "Error fetching data", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -297,12 +297,13 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id){
             case android.R.id.home:
+                //open the drawer layout
                 drawerLayout.openDrawer(Gravity.START);
                 break;
 
             case R.id.sign_out:
                 /**
-                 * Set the logout progress visible
+                 * Set logout progress bar visible
                  */
                 ProgressBar progressBar = (ProgressBar) findViewById(R.id.mProgress_bar);
                 TextView progressBar_text = (TextView) findViewById(R.id.progressBar_text);

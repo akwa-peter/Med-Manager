@@ -151,7 +151,6 @@ public class Add_Medication extends AppCompatActivity {
         addMedication.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startAlertAtParticularTime();
                 //Hide the keyboard
                 InputMethodManager keyboard = (InputMethodManager) getSystemService(Add_Medication.this.INPUT_METHOD_SERVICE);
                 keyboard.hideSoftInputFromWindow(medicationName.getWindowToken(), 0);
@@ -173,6 +172,9 @@ public class Add_Medication extends AppCompatActivity {
                             quantity.getText().toString(),
                             startDate.getText().toString(),
                             zMedicationMonth);
+
+                    //start the alarm at using the frequency of the users medication
+                    startAlertAtParticularTime(getNotification(description.getText().toString()), 5000);
 
                     Toast.makeText(Add_Medication.this, "Medication added successfully", Toast.LENGTH_LONG).show();
                     finish();
@@ -299,19 +301,19 @@ public class Add_Medication extends AppCompatActivity {
 
 
 
-    private void scheduleNotification(Notification notification, int delay) {
-
-        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, futureInMillis,
-                1000 * 60 * 20, pendingIntent);
-    }
+//    private void scheduleNotification(Notification notification, int delay) {
+//
+//        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+//        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, futureInMillis,
+//                1000 * 60 * 20, pendingIntent);
+//    }
 
     private Notification getNotification(String content) {
         Notification.Builder builder = new Notification.Builder(this);
@@ -321,17 +323,22 @@ public class Add_Medication extends AppCompatActivity {
         return builder.build();
     }
 
-    public void startAlertAtParticularTime() {
+    public void startAlertAtParticularTime(Notification notification, int delay) {
+
+        Intent intent = new Intent(this, NotificationPublisher.class);
+        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        intent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // alarm first vibrate at 14 hrs and 40 min and repeat itself at ONE_HOUR interval
-        Intent intent = new Intent(this, NotificationPublisher.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+//        Intent intent = new Intent(this, NotificationPublisher.class);
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(
                 this.getApplicationContext(), 280192, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 19);
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 0);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
