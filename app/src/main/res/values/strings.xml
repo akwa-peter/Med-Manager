@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Med-Manager</string>
-    <string name="add_med_text">Fill in the fields properly as prescribed by the doctor.</string>
+    <string name="add_med_text">Please fill in the fields properly.</string>
     <string name="action_bar_intro1">Health is Wealth, take your medications at the</string>
     <string name="action_bar_intro2">proper time as prescribed by the doctor.</string>
+    <string name="medication_procedure">Enter the procedure for taking the medication below, as prescribed by the doctor e.g 2 X 2</string>
 
 </resources>

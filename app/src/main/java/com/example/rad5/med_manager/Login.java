@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.rad5.med_manager.Help_Classes.DatabaseUtil;
 import com.example.rad5.med_manager.Help_Classes.User;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
@@ -54,11 +55,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // get firebase database instance
+        database = DatabaseUtil.getDatabase();
+
         //default view for snack bar
         view = (View) findViewById(R.id.health_care_logo);
-
-        // get firebase database instance
-        database = FirebaseDatabase.getInstance();
 
         //check if user is logged in
         // Check for existing Google Sign In account, if the user is already signed in

@@ -1,6 +1,12 @@
 package com.example.rad5.med_manager;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -9,6 +15,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,13 +25,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rad5.med_manager.Help_Classes.DatabaseUtil;
 import com.example.rad5.med_manager.Help_Classes.Medication;
-import com.example.rad5.med_manager.Help_Classes.MedicationAdapter;
+import com.example.rad5.med_manager.Help_Classes.NotificationPublisher;
+import com.example.rad5.med_manager.Help_Classes.RecyclerAdapter;
+import com.example.rad5.med_manager.Help_Classes.toTitleCase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,9 +43,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,19 +61,29 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseUser currentUser;
 
+    private FirebaseDatabase database;
     DatabaseReference ref;
-    ListView listView;
+    RecyclerView list;
     ArrayList<Medication> medications;
-    MedicationAdapter adapter;
+    RecyclerAdapter adapter;
     Medication medication;
+    private static MainActivity inst;
+
+    toTitleCase titleCase = new toTitleCase();
+
+    public static MainActivity instance() {
+        return inst;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        database = DatabaseUtil.getDatabase();
+
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //Toast.makeText(MainActivity.this, " "+currentUser.getDisplayName() + " "+currentUser.getEmail(), Toast.LENGTH_LONG).show();
 
         //default view for snack bar
         final View view = (View) findViewById(R.id.drawer_layout);
@@ -76,17 +99,23 @@ public class MainActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        listView = (ListView) findViewById(R.id.my_list);
+        list = (RecyclerView) findViewById(R.id.my_list);
+        // Set the layout manager
+        list.setLayoutManager(new LinearLayoutManager(this));
+
         medications = new ArrayList<Medication>();
         medication = new Medication();
 
-        adapter = new MedicationAdapter(this, medications);
+        adapter = new RecyclerAdapter(this, medications);
 
         //get the firebase database reference
-        ref = FirebaseDatabase.getInstance().getReference()
+        ref = database.getReference()
                 .child("users").child(currentUser.getDisplayName()).child("medications");
 
-        ref.addValueEventListener(new ValueEventListener() {
+        Query query = ref.orderByChild("zMedicationMonth");
+
+        //add a value event listener to the database reference
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 medications.clear();
@@ -98,13 +127,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                Log.d("debugger", "medication item = " + medication.getDescription());
-                listView.setAdapter(adapter);
+                list.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadMedications : onCancelled", databaseError.toException());
             }
         });
 
@@ -165,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
         add_medication.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Add_Medication.class));
+                Intent intent = new Intent(MainActivity.this, Add_Medication.class);
+                intent.putExtra("intent", "btn_add_medication");
+                startActivity(intent);
             }
         });
 
@@ -180,7 +211,79 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(MainActivity.this.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String search) {
+                return false;
+            }
+
+            Query filterQuery;
+
+            @Override
+            public boolean onQueryTextChange(final String search) {
+
+                //Convert the string to a sentence case
+                final String text = titleCase.toTitle(search);
+
+                //if the length of the string is equal to 0 then order by month
+                if (text.length() == 0){
+                    filterQuery = ref.orderByChild("zMedicationMonth");
+                }
+                else {//else order by name and start at queried text
+                    filterQuery = ref.orderByChild("name").startAt(text);
+                }
+
+                //add value event listener to the query
+                filterQuery.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        medications.clear();
+
+                        //for each data in our datasnapshot,
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+
+                            //get the value as a medication object
+                            medication = ds.getValue(Medication.class);
+                            //if the name of the medication contains the text constrain
+                            if (medication.getName().contains(text)) {
+                                //add the medication to our list of medications
+                                medications.add(medication);
+                            }
+
+                        }
+
+                        //bind the adapter to our listView
+                        list.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+//                adapter.getFilter().filter(search);
+//                list.setAdapter(adapter);
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return false;
+            }
+        });
+
+        return true;
     }
 
     /**
@@ -198,7 +301,18 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.sign_out:
+                /**
+                 * Set the logout progress visible
+                 */
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.mProgress_bar);
+                TextView progressBar_text = (TextView) findViewById(R.id.progressBar_text);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar_text.setVisibility(View.VISIBLE);
                 signOut();
+                break;
+
+            case R.id.action_search:
+                onSearchRequested();
                 break;
 
             default:
@@ -225,4 +339,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
+
+
 }
