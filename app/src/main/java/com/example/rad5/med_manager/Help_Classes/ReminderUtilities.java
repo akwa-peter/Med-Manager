@@ -1,6 +1,9 @@
 package com.example.rad5.med_manager.Help_Classes;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
@@ -8,8 +11,11 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
 
-import java.sql.Driver;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.ALARM_SERVICE;
 
 /**
  * Created by akwa on 4/16/18.
@@ -17,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ReminderUtilities {
 
-    private static final int REMINDER_INTERVAL_MINUTES = 1;
+    private static final int REMINDER_INTERVAL_MINUTES = 6;
     private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(REMINDER_INTERVAL_MINUTES));
     private static final int SYNC_FLEX_TIME = REMINDER_INTERVAL_SECONDS;
 
@@ -42,5 +48,6 @@ public class ReminderUtilities {
 
         dispatcher.schedule(notifyJob);
         isInitialized = true;
+
     }
 }

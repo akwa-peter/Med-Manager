@@ -1,9 +1,6 @@
 package com.example.rad5.med_manager;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,14 +20,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rad5.med_manager.Help_Classes.DatabaseUtil;
 import com.example.rad5.med_manager.Help_Classes.Medication;
-import com.example.rad5.med_manager.Help_Classes.NotificationUtils;
 import com.example.rad5.med_manager.Help_Classes.RecyclerAdapter;
 import com.example.rad5.med_manager.Help_Classes.ReminderUtilities;
 import com.example.rad5.med_manager.Help_Classes.toTitleCase;
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         database = DatabaseUtil.getDatabase();
 
-//        ReminderUtilities.scheduleAlarm(this);
+        ReminderUtilities.scheduleAlarm(this);
 
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -338,7 +333,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void testNotification(){
-        NotificationUtils.remindUserForMedication(this);
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
     }
 }

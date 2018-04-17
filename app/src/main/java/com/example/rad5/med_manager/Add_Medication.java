@@ -158,7 +158,7 @@ public class Add_Medication extends AppCompatActivity {
                     Snackbar.make(view, "Please all fields are required", Snackbar.LENGTH_LONG).show();
                 }
                 else {
-                    addNewMedication(description.getText().toString(),
+                    addNewMedication(titleCase.toTitle(description.getText().toString()),
                             endDate.getText().toString(),
                             frequency.getText().toString(),
                             titleCase.toTitle(medicationName.getText().toString()),

@@ -48,7 +48,7 @@ public class NotificationUtils {
                 .setColor(ContextCompat.getColor(context, R.color.colorWhite))
                 .setSmallIcon(R.drawable.health_care_logo)
                 .setLargeIcon(notificationIcon(context))
-                .setContentTitle("Medication Reinder")
+                .setContentTitle("Medication Reminder")
                 .setContentText("Its time for your medication")
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Its time for your medication"))
                 .setDefaults(Notification.DEFAULT_VIBRATE)

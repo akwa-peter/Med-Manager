@@ -154,7 +154,7 @@ public class MedicationInfo extends AppCompatActivity implements
      * Updates the TextView to display the new water count from SharedPreferences
      */
     private void updateMedicationCount() {
-        int medicationCount = PreferenceUtils.setMedicationCount();
+        int medicationCount = PreferenceUtils.getMedicationCount(this, preceedingIntent);
         txt_medicationCount.setText(medicationCount + "");
     }
 

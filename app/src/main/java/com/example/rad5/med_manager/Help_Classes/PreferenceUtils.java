@@ -36,7 +36,4 @@ public final class PreferenceUtils {
         Log.d("debugger", "Now in Preferenceutils.increamentCount : "+ KEY_MEDICATION_NAME + medicationCount);
     }
 
-    public static int setMedicationCount(){
-        return MEDICATION_COUNT;
-    }
 }
