@@ -1,12 +1,7 @@
 package com.example.rad5.med_manager;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -20,16 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.rad5.med_manager.Help_Classes.Medication;
-import com.example.rad5.med_manager.Help_Classes.NotificationPublisher;
 import com.example.rad5.med_manager.Help_Classes.toTitleCase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
@@ -61,7 +53,6 @@ public class Add_Medication extends AppCompatActivity {
     FirebaseUser currentUser;
     //instantiate firebase database
     private FirebaseDatabase database;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +122,7 @@ public class Add_Medication extends AppCompatActivity {
             public void onClick(View view) {
                 //Get the calender class instance and get the current date from the calender
                 Calendar calendar = Calendar.getInstance();
+
                 int mYear = calendar.get(Calendar.YEAR);
                 int mMonth = calendar.get(Calendar.MONTH);
                 int mDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -143,6 +135,7 @@ public class Add_Medication extends AppCompatActivity {
                                 endDate.setText(day + "/" + month + "/" + year);
                             }
                         }, mYear, mMonth, mDay);
+
                 datePickerDialog.show();
             }
         });
@@ -173,9 +166,6 @@ public class Add_Medication extends AppCompatActivity {
                             startDate.getText().toString(),
                             zMedicationMonth);
 
-                    //start the alarm at using the frequency of the users medication
-                    startAlertAtParticularTime(getNotification(description.getText().toString()), 5000);
-
                     Toast.makeText(Add_Medication.this, "Medication added successfully", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -194,8 +184,6 @@ public class Add_Medication extends AppCompatActivity {
                 .child("users").child(currentUser.getDisplayName())
                 .child("medications").child(preceedingIntent);
 
-        //Find the linearLayout holding the edit icon and text
-        final LinearLayout btnEdit = (LinearLayout) findViewById(R.id.edit);
         //initialize the delete button and set an onClick listener to delete the medication
         final LinearLayout btnDelete = (LinearLayout) findViewById(R.id.delete);
 
@@ -209,28 +197,12 @@ public class Add_Medication extends AppCompatActivity {
             }
         });
 
-        /**
-         *dynamically make the edit button invisible when clicked
-         * and make the done editing button visible
-         */
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnEdit.setVisibility(View.INVISIBLE);
-                addMedication.setVisibility(View.VISIBLE);
-            }
-        });
 
         //if the preceeding intent is triggered by the add new medication floating action button
-        if (preceedingIntent.equals("btn_add_medication")){
-            addMedication.setVisibility(View.VISIBLE);
-        }
-        else {//else if it is triggered by any of the list item
+        if (!preceedingIntent.equals("btn_add_medication")){
 
             //Change the title of the action bar to the medication name
             toolbar.setTitle(preceedingIntent);
-            //set the edit button visible
-            btnEdit.setVisibility(View.VISIBLE);
 
             //disable all the edit text views
             medicationName.setFocusable(false);
@@ -292,62 +264,8 @@ public class Add_Medication extends AppCompatActivity {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(name, userValues);
 
-
-//        scheduleNotification(getNotification(medication.getDescription()), 5000);
-
         //update the medications with the new values
         myRef.updateChildren(childUpdates);
     }
 
-
-
-//    private void scheduleNotification(Notification notification, int delay) {
-//
-//        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
-//        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-//        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-//
-//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, futureInMillis,
-//                1000 * 60 * 20, pendingIntent);
-//    }
-
-    private Notification getNotification(String content) {
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("Notification For: " + medicationName.getText() + " Medication");
-        builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.health_care_logo);
-        return builder.build();
-    }
-
-    public void startAlertAtParticularTime(Notification notification, int delay) {
-
-        Intent intent = new Intent(this, NotificationPublisher.class);
-        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
-        intent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // alarm first vibrate at 14 hrs and 40 min and repeat itself at ONE_HOUR interval
-//        Intent intent = new Intent(this, NotificationPublisher.class);
-        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(
-                this.getApplicationContext(), 280192, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 0);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        assert alarmManager != null;
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_HOUR, pendingIntent);
-
-        Toast.makeText(this, "Alarm will vibrate at time specified",
-                Toast.LENGTH_SHORT).show();
-
-    }
 }

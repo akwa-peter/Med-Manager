@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rad5.med_manager.Add_Medication;
+import com.example.rad5.med_manager.MedicationInfo;
 import com.example.rad5.med_manager.R;
 import com.squareup.picasso.Picasso;
 
@@ -26,12 +27,10 @@ import static android.support.v4.content.ContextCompat.startActivity;
  * Created by akwa on 4/6/18.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> implements Filterable{
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder>{
 
     private Context context;
     private ArrayList<Medication> medications;
-    private ArrayList<Medication> filteredMedications = new ArrayList<>();
-    private CustomFilter mFilter;
 
     /**
      * Create a constructor for the class to get the context and the list of medications
@@ -41,7 +40,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public RecyclerAdapter(Context context, ArrayList<Medication> medications) {
         this.context = context;
         this.medications = medications;
-        mFilter = new CustomFilter(RecyclerAdapter.this);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             @Override
             public void onClick(View view) {
 //                    Toast.makeText(context, "Click a list item at position " + getAdapterPosition(), Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(context, Add_Medication.class);
+                Intent intent = new Intent(context, MedicationInfo.class);
                 intent.putExtra("intent", medication.getName());
                 startActivity(context, intent, null);
             }
@@ -76,11 +74,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public int getItemCount() {
         //return the total size of the medications list
         return medications.size();
-    }
-
-    @Override
-    public Filter getFilter() {
-        return mFilter;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -97,41 +90,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         }
     }
-
-
-    public class CustomFilter extends Filter {
-        private RecyclerAdapter mAdapter;
-        private CustomFilter(RecyclerAdapter mAdapter) {
-            super();
-            this.mAdapter = mAdapter;
-        }
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            filteredMedications.clear();
-            final FilterResults results = new FilterResults();
-            if (constraint.length() == 0) {
-                filteredMedications.addAll(medications);
-            } else {
-                final String filterPattern = constraint.toString().toLowerCase().trim();
-                for (Medication med : medications) {
-                    if (med.getName().toLowerCase().startsWith(filterPattern)) {
-                        filteredMedications.add(med);
-                    }
-                }
-            }
-//            System.out.println("Count Number " + filteredMedications.size());
-            Log.d("debugger", "medications size = " + filteredMedications.size());
-            results.values = filteredMedications;
-            results.count = filteredMedications.size();
-            return results;
-        }
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            Log.d("debugger", "filtered results size = " + results.values);
-//            System.out.println("Count Number 2 " + ((List<QuizObject>) results.values).size());
-            this.mAdapter.notifyDataSetChanged();
-        }
-    }
-
 
 }
