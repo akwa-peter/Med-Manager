@@ -24,7 +24,7 @@ import static android.content.Context.ALARM_SERVICE;
 public class ReminderUtilities {
 
     private static final int REMINDER_INTERVAL_MINUTES = 6;
-    private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(REMINDER_INTERVAL_MINUTES));
+    private static final int REMINDER_INTERVAL_SECONDS = (int) (TimeUnit.HOURS.toSeconds(REMINDER_INTERVAL_MINUTES));
     private static final int SYNC_FLEX_TIME = REMINDER_INTERVAL_SECONDS;
 
     private static final String JOB_REMINDER_TAG = "Notification_Tag";
@@ -39,7 +39,7 @@ public class ReminderUtilities {
                 .setService(MedicationReminderFirebaseJobService.class)
                 .setTag(JOB_REMINDER_TAG)
                 .setLifetime(Lifetime.FOREVER)
-                .setRecurring(true)
+                .setRecurring(false)
                 .setTrigger(Trigger.executionWindow(
                         REMINDER_INTERVAL_SECONDS,
                         REMINDER_INTERVAL_SECONDS + SYNC_FLEX_TIME))
