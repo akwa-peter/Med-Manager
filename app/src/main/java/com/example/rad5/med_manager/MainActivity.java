@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rad5.med_manager.Help_Classes.AlarmReceiver;
+import com.example.rad5.med_manager.Help_Classes.AlarmScheduler;
 import com.example.rad5.med_manager.Help_Classes.DatabaseUtil;
 import com.example.rad5.med_manager.Help_Classes.Medication;
 import com.example.rad5.med_manager.Help_Classes.RecyclerAdapter;
@@ -65,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Medication> medications;
     RecyclerAdapter adapter;
     Medication medication;
-
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
 
     toTitleCase titleCase = new toTitleCase();
 
@@ -124,12 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                //return null if the event result is empty
-                if (medications == null || medications.isEmpty()){
-                    // Set empty state text to display "No earthquakes found."
-                    mEmptyStateTextView.setText(R.string.empty_state);
-                }
-
                 list.setAdapter(adapter);
             }
 
@@ -140,26 +132,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        alarmMgr = (AlarmManager)this.getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-        // Set the alarm to start at 8:30 a.m.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 1);
-        calendar.set(Calendar.AM_PM,Calendar.AM);
-
-        //if the set time is less than the current time, add a day
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DATE, 1);
+        //return null if the event result is empty
+        if (medications == null || medications.isEmpty()){
+            // Set empty state text to display "No earthquakes found."
+            mEmptyStateTextView.setText(R.string.empty_state);
         }
 
-        // setRepeating() lets you specify a precise custom interval--in this case,
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        //schedule an alarm
+        AlarmScheduler.scheduleAlarm(MainActivity.this);
 
         //find the navigation view and the drawer layout
         navigationView = (NavigationView) findViewById(R.id.nav_view);
