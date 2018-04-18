@@ -9,15 +9,11 @@ import android.content.Context;
 public class ReminderTask {
 
     public static final String ACTION_INCREMENT_MEDICATION_COUNT = "increment-medication-count";
-    public static final String ACTION_MAKE_AN_ALARM = "make_alarm";
 
     public static void executeTask(Context context, String action, String KEY_MEDICATION_NAME) {
         if (ACTION_INCREMENT_MEDICATION_COUNT.equals(action)) {
             //increment medication count
             PreferenceUtils.incrementMedicationCount(context, KEY_MEDICATION_NAME);
-        }
-        else if (ACTION_MAKE_AN_ALARM.equals(action)){
-
         }
     }
 }

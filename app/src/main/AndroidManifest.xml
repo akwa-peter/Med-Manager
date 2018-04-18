@@ -47,13 +47,9 @@
             android:name=".Help_Classes.MedicationReminderIntentService"
             android:exported="false"/>
 
-        <service
-            android:exported="false"
-            android:name=".Help_Classes.MedicationReminderFirebaseJobService">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
-            </intent-filter>
-        </service>
+        <receiver android:name=".Help_Classes.AlarmReceiver"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

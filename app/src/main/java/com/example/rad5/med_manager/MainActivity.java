@@ -1,5 +1,7 @@
 package com.example.rad5.med_manager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -24,10 +26,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rad5.med_manager.Help_Classes.AlarmReceiver;
 import com.example.rad5.med_manager.Help_Classes.DatabaseUtil;
 import com.example.rad5.med_manager.Help_Classes.Medication;
 import com.example.rad5.med_manager.Help_Classes.RecyclerAdapter;
-import com.example.rad5.med_manager.Help_Classes.ReminderUtilities;
 import com.example.rad5.med_manager.Help_Classes.toTitleCase;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,6 +44,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     FloatingActionButton add_medication;
+    TextView mEmptyStateTextView;
 
     FirebaseUser currentUser;
 
@@ -62,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     RecyclerAdapter adapter;
     Medication medication;
 
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
+
     toTitleCase titleCase = new toTitleCase();
 
     @Override
@@ -71,13 +78,12 @@ public class MainActivity extends AppCompatActivity {
 
         database = DatabaseUtil.getDatabase();
 
-        ReminderUtilities.scheduleAlarm(this);
-
         // Check if user is signed in (non-null) and update UI accordingly.
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //default view for snack bar
         final View view = (View) findViewById(R.id.drawer_layout);
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
 
         //Add Action bar to the main activity
         toolbar = (Toolbar) findViewById(R.id.mainActivity_toolbar);
@@ -118,6 +124,12 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+                //return null if the event result is empty
+                if (medications == null || medications.isEmpty()){
+                    // Set empty state text to display "No earthquakes found."
+                    mEmptyStateTextView.setText(R.string.empty_state);
+                }
+
                 list.setAdapter(adapter);
             }
 
@@ -127,6 +139,27 @@ public class MainActivity extends AppCompatActivity {
                 Log.w(TAG, "loadMedications : onCancelled", databaseError.toException());
             }
         });
+
+
+        alarmMgr = (AlarmManager)this.getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        // Set the alarm to start at 8:30 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 1);
+        calendar.set(Calendar.AM_PM,Calendar.AM);
+
+        //if the set time is less than the current time, add a day
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        // setRepeating() lets you specify a precise custom interval--in this case,
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
 
         //find the navigation view and the drawer layout
         navigationView = (NavigationView) findViewById(R.id.nav_view);
